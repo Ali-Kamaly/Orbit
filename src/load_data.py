@@ -1,8 +1,9 @@
 import pandas as pd
 
-original_df = pd.read_csv("data\\raw\dataset.csv")
-new_df = original_df[['artists','track_name','popularity','duration_ms','explicit','danceability','energy',
-                      'loudness','speechiness','acousticness','instrumentalness','liveness','valence','tempo']].copy()
+def get_df():
+    original_df = pd.read_csv("data\\raw\dataset.csv")
+    return original_df
 
-print(original_df)
-print(new_df)
+
+
+
