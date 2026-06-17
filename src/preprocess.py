@@ -1,4 +1,3 @@
-import pandas as pd
 import load_data
 
 from sklearn.preprocessing import StandardScaler
