@@ -53,4 +53,9 @@ Enter artist name: Drake;Wizkid;Kyla
 - I started with equal weighting after standardisation, then added user-controlled feature weighting to let users customise the similarity metric instead of assuming one universal definition of vibe
 - originally had all 9 sliders on screen, too overwhelming and too much finetuning may reduce to 3-4 instead
 - added presets to make it easier for user to define how they want to get recommended songs
+- similarity depends on the definition of similarity
+- will need to further improve presets with user feedback perhaps
+    - realised that feature weights do not mean “make this feature high or low.”  
+    They mean “how important is it that this feature matches the query song?”
+    For example, increasing the energy weight does not mean recommending high-energy songs. It means recommendations must have energy values closer to the query song’s energy
 - added tickbox option for user to fine tune recommendation system themselves if they want to

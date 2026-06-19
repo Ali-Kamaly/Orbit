@@ -5,8 +5,16 @@ import numpy as np
 st.title("Orbit")
 st.write("Music that revolves around you")
 
-preset = st.selectbox("Choose a vibe preset",["Balanced", "Dance/Party"])
+preset = st.selectbox("Choose what aspect of the song should matter most",["Balanced", "Rhythm Focused", "Energy Focused", "Acoustic Focused", "Vocals Focused", "Mood Focused"])
 advanced = st.checkbox("Advanced Controls")
+
+st.info(
+"""Rhythm Focused = match movement/groove/danceability/tempo\n
+Energy Focused = match intensity/punch/loudness\n
+Acoustic Focused = match organic/acoustic texture\n
+Vocals Focused = match speech/vocal-forward qualities\n
+Mood Focused = match emotional tone, mainly valence\n"""
+)
 
 if preset == "Balanced":
     danceability_weight = 1.0
@@ -19,16 +27,61 @@ if preset == "Balanced":
     valence_weight = 1.0
     tempo_weight = 1.0
 
-if preset == "Dance/Party":
+if preset == "Rhythm Focused":
     danceability_weight = 2.5
-    energy_weight = 2.2
-    loudness_weight = 1.3
-    speechiness_weight = 1.0
-    acousticness_weight = 1.0
-    instrumentalness_weight = 1.0
-    liveness_weight = 2.0
-    valence_weight = 2.2
+    energy_weight = 1.3
+    loudness_weight = 1.0
+    speechiness_weight = 0.8
+    acousticness_weight = 0.7
+    instrumentalness_weight = 0.6
+    liveness_weight = 0.6
+    valence_weight = 1.2
+    tempo_weight = 1.8
+
+if preset == "Energy Focused":
+    danceability_weight = 1.4
+    energy_weight = 2.5
+    loudness_weight = 1.8
+    speechiness_weight = 0.8
+    acousticness_weight = 0.6
+    instrumentalness_weight = 0.6
+    liveness_weight = 0.8
+    valence_weight = 1.4
+    tempo_weight = 1.5
+
+if preset == "Acoustic Focused":
+    danceability_weight = 0.8
+    energy_weight = 0.8
+    loudness_weight = 1.2
+    speechiness_weight = 0.7
+    acousticness_weight = 2.7
+    instrumentalness_weight = 1.8
+    liveness_weight = 0.6
+    valence_weight = 1.1
     tempo_weight = 1.0
+
+if preset == "Vocals Focused":
+    danceability_weight = 1.0
+    energy_weight = 1.0
+    loudness_weight = 1.0
+    speechiness_weight = 2.5
+    acousticness_weight = 0.9
+    instrumentalness_weight = 0.6
+    liveness_weight = 0.7
+    valence_weight = 1.2
+    tempo_weight = 0.8
+
+if preset == "Mood Focused":
+    danceability_weight = 1.0
+    energy_weight = 1.2
+    loudness_weight = 1.2
+    speechiness_weight = 0.7
+    acousticness_weight = 1.2
+    instrumentalness_weight = 0.8
+    liveness_weight = 0.6
+    valence_weight = 2.5
+    tempo_weight = 1.0
+
 
 
 if advanced:
