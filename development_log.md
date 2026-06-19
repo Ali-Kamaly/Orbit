@@ -48,4 +48,9 @@ Enter artist name: Drake;Wizkid;Kyla
 
 19/06/2026
 - first phase of feature scaling, user can adjust depending on preferences how they want to get recommended songs
+- added sliders that user can adjust and fine tune to get more personalised recommendations
+    - but it can be fiddly and having slider a few degrees off leads to different songs so user may miss out on songs, maybe have some presets for users who aren't as comfortable with music terminology or who don't know exactly what they like
 - I started with equal weighting after standardisation, then added user-controlled feature weighting to let users customise the similarity metric instead of assuming one universal definition of vibe
+- originally had all 9 sliders on screen, too overwhelming and too much finetuning may reduce to 3-4 instead
+- added presets to make it easier for user to define how they want to get recommended songs
+- added tickbox option for user to fine tune recommendation system themselves if they want to
