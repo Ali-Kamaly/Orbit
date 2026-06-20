@@ -132,22 +132,37 @@ if st.button("Recommend"):
         recommendations, distances = result
         spotify_links = []
         print(recommendations)
-        i=1
+        i, rank= 1,1
         #index i = 0 is the song itself hence dist = 0.0
         for _, row in recommendations.iterrows():
-            print(row)
             result = search_track(row["track_name"], row["artists"])
             if result is None:
-                spotify_links.append(None)
-            else:
-                url, album, cover = result
-                spotify_links.append(url)
-        
+                continue
+            
+            url, album, cover = result
+            col1, col2 = st.columns([1,2])
+            
+            with col1:
+                st.write(f"### #{rank}")
+                st.image(cover, width=220)
+            
+            with col2:
+                st.markdown(
+            f"### {row['track_name']} | {row['artists']}")
+                st.link_button("Open in Spotify", url)
+
+                st.write(f"Album: {album}")
+                st.write(f"Distance: {distances[0][i].round(3)}")
+                i+=1
+                rank+=1
+            st.divider()
+
+
         #displaying recommendation cards
-            st.image(cover, width = 440)
+            """st.image(cover, width = 440)
             st.markdown(f"[{row['track_name']} - {row['artists']}] ({url})")
             st.write(f"Distance: {distances[0][i].round(3)}")
-            i+=1
+            i+=1"""
 
 
         """recommendations = recommendations.copy()
