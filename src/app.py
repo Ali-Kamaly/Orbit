@@ -153,21 +153,9 @@ if st.button("Recommend"):
 
                 st.write(f"Album: {album}")
                 st.write(f"Distance: {distances[0][i].round(3)}")
+                match_score = round(100 / (1 + distances[0][i].round(3)), 1)
+                st.write(f"Match Score: {match_score}%")
                 i+=1
                 rank+=1
             st.divider()
 
-
-        #displaying recommendation cards
-            """st.image(cover, width = 440)
-            st.markdown(f"[{row['track_name']} - {row['artists']}] ({url})")
-            st.write(f"Distance: {distances[0][i].round(3)}")
-            i+=1"""
-
-
-        """recommendations = recommendations.copy()
-        recommendations['distance'] = distances[0].round(3)
-        recommendations = recommendations.copy()
-        recommendations['link'] = spotify_links
-        st.dataframe(recommendations[["track_name","artists","distance", "link"]])"""
-        
