@@ -4,7 +4,7 @@ import numpy as np
 from spotify_utils import search_track
 
 st.title("Orbit")
-st.write("Music that revolves around you")
+st.subheader("Music that revolves around you.")
 
 preset = st.selectbox("Choose what aspect of the song should matter most",["Balanced", "Rhythm Focused", "Energy Focused", "Acoustic Focused", "Vocals Focused", "Mood Focused"])
 

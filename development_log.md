@@ -66,3 +66,5 @@ Enter artist name: Drake;Wizkid;Kyla
     - tested with Apocalypse by Cigarettes After Sex and all songs recommended were accurate and had accurate links to Spotify
 - made whole app feel more polished and less of a dataframe website and more of a song recommendation website
 - added corresponding album covers to make app feel more polished
+- implemented simple match score as that's more useful than distance score for user, intentionally didn'y say accuracy or likelihood of liking song
+- noticed bug: entered beautiful (feat. Camila Cabello) and it suggested ranked 1 song same song but with match of 99.4% distance of 0.006 - dataset has repeated song wasnt removed since one is without (feat. Camila Cabello) even though she is featured in the song so wasn't classified as a duplicate
