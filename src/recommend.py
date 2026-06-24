@@ -50,14 +50,17 @@ def get_query_songs():
 
 def get_query_vectors(query_songs, query_artists, df, similarity_features):
     query_vectors = []
+    valid_songs = 0
 
     for i in range (len(query_songs)):    
         matches = get_matches(query_songs[i], query_artists[i], df)
+        print(matches)
         #index of song in the df
         if matches.empty:
             #print(f"The song {query_songs[i]} by {query_artists[i]} was not found.")
-            return
+            pass
         else:
+            valid_songs +=1
             query_song = matches.iloc[0]
             #converted to series- only want first match
             query_vector = query_song[similarity_features].values
@@ -67,7 +70,9 @@ def get_query_vectors(query_songs, query_artists, df, similarity_features):
             #print(f"Query vector:\n{query_vector}")
 
             #print(matches)
-    return query_vectors
+    if len(query_vectors) == 0:
+        query_vectors = None
+    return query_vectors, valid_songs
 
 def get_query_vectors_avg(query_vectors):
     """
@@ -83,7 +88,7 @@ def get_query_vectors_avg(query_vectors):
 
 def get_recommendations(query_songs, query_artists, weights):
     df, similarity_features = initial_set_up()
-    query_vectors = get_query_vectors(query_songs, query_artists, df, similarity_features)
+    query_vectors, valid_songs_count = get_query_vectors(query_songs, query_artists, df, similarity_features)
     if query_vectors is None:
         return
     weighted_query_vectors = query_vectors * weights
@@ -101,7 +106,7 @@ def get_recommendations(query_songs, query_artists, weights):
     weighted_song_vectors = song_vectors * weights
     recommendations, distances = find_closest_songs(query_vectors_avg, weighted_song_vectors, df)
 
-    return recommendations, distances
+    return recommendations, distances, valid_songs_count
 
 
 
@@ -131,3 +136,4 @@ if __name__ == "__main__":
     recommendations, distances = get_recommendations(query_songs, query_artists, weights)
     print(recommendations[["track_name", "artists"]])
     print(distances)
+

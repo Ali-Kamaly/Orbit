@@ -1,7 +1,7 @@
 import streamlit as st
 from recommend import get_recommendations
 import numpy as np
-from spotify_utils import search_track, get_track_from_url
+from spotify_utils import search_track, get_track_from_track_url, get_tracks_from_playlist
 
 st.title("Orbit")
 st.subheader("Music that revolves around you.")
@@ -115,11 +115,11 @@ weights = np.array([
 
 input_mode = st.radio("Input type", ["Manual Entry", "Spotify Link"])
 
-num_songs = st.number_input("How many songs would you like to enter: ", min_value = 1)
 song_names = []
 artists = []
 
 if input_mode == "Manual Entry":
+    num_songs = st.number_input("How many songs would you like to enter: ", min_value = 1)
 
     for i in range(num_songs):
         song_name = st.text_input(f"Song {i+1} Name")
@@ -129,14 +129,28 @@ if input_mode == "Manual Entry":
 
 
 else:
-    for i in range(num_songs):
-        spotify_url = st.text_input(f"Paste spotify track {i+1} URL:")
-        track_data = get_track_from_url(spotify_url)
-        if track_data is None:
-            continue
-        track_name, artist = track_data
-        song_names.append(track_name)
-        artists.append(artist)
+    type_of_link = st.radio("Link type", ["Track link", "Playlist link"])
+
+    if type_of_link == "Track link":
+        num_songs = st.number_input("How many songs would you like to enter: ", min_value = 1)
+
+        for i in range(num_songs):
+            spotify_url = st.text_input(f"Paste spotify track {i+1} URL:")
+            track_data = get_track_from_track_url(spotify_url)
+            if track_data is None:
+                continue
+            track_name, artist = track_data
+            song_names.append(track_name)
+            artists.append(artist)
+    else:
+        spotify_url = st.text_input("Paste spotify public playlist URL: ")
+        tracks_data = get_tracks_from_playlist(spotify_url)
+        if tracks_data is not None:
+            track_names, artists_names = tracks_data
+            song_names = track_names.copy()
+            artists = artists_names.copy()
+        
+
 
 
 if st.button("Recommend"):
@@ -144,7 +158,7 @@ if st.button("Recommend"):
     if result is None:
         st.error("Song not found :(")
     else:
-        recommendations, distances = result
+        recommendations, distances, valid_songs_count = result
         print(recommendations)
         i, rank= 1,1
         #index i = 0 is the song itself hence dist = 0.0
@@ -172,3 +186,4 @@ if st.button("Recommend"):
                 i+=1
                 rank+=1
             st.divider()
+        st.write(f"Recommendations based on {valid_songs_count}/{len(song_names)} songs from playlist given.")

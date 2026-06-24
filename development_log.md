@@ -74,3 +74,4 @@ Enter artist name: Drake;Wizkid;Kyla
     - added this feature since realised how common it is to have typo or not know everyone who is featured in a song, now it's easy to get recommendations via pasting spotify link
     - maybe add feature that shows the details of the song you pasted to make sure correct song was inputted
 - annoying having relatively small dataset as more often than not the user's decided song to use as input will not be in the dataset
+- planing to add spotify public playlist link capability for user, program will have to adapt depending on what link is sent, user shouldn't have to specify that its a playlist etc. so can have a cleaner UX design

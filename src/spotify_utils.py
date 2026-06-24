@@ -1,6 +1,7 @@
 from dotenv import load_dotenv
 import os, spotipy
 from spotipy.oauth2 import SpotifyOAuth
+from pprint import pprint
 
 load_dotenv()
 
@@ -37,8 +38,42 @@ def extract_track_id(spotify_url):
     track_id = spotify_url.split('track/')[1].split('?')[0]
     return track_id
 
+def extract_playlist_id(spotify_url):
+    if "playlist/" not in spotify_url:
+        print("invalid playlist link")
+        return None
 
-def get_track_from_url(spotify_url):
+    playlist_id = spotify_url.split('playlist/')[1].split('?')[0]
+    return playlist_id
+
+def get_tracks_from_playlist(spotify_url):
+    playlist_id = extract_playlist_id(spotify_url)
+    print(playlist_id)
+    if playlist_id is None:
+        return None
+    
+    results = sp.playlist_items(playlist_id)
+
+    while results: 
+        song_names = []
+        artists = []
+
+        for song in results['items']:
+            print(song)
+            if song is None:
+                continue
+            track = song['item']
+            song_names.append(track['name'])
+            artist_names = ';'.join([artist['name'] for artist in track['artists']])
+            artists.append(artist_names)
+
+        if results['next']:
+            results = sp.next(results)
+        else:
+            break
+    return song_names, artists
+
+def get_track_from_track_url(spotify_url):
     track_id = extract_track_id(spotify_url)
     print(track_id)
     if track_id is None:
@@ -50,4 +85,4 @@ def get_track_from_url(spotify_url):
     print(track_name, artists)
     return track_name, artists
 
-get_track_from_url("https://open.spotify.com/track/6DCZcSspjsKoFjzjrWoCdn")
+get_tracks_from_playlist("https://open.spotify.com/playlist/0UpZYECCrXxyoprMaSAX9R")
