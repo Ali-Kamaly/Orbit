@@ -148,6 +148,7 @@ else:
         if tracks_data is not None:
             track_names, artists_names = tracks_data
             song_names = track_names.copy()
+            print(len(song_names))
             artists = artists_names.copy()
         
 
@@ -159,7 +160,7 @@ if st.button("Recommend"):
         st.error("Song not found :(")
     else:
         recommendations, distances, valid_songs_count = result
-        print(recommendations)
+        #print(recommendations)
         i, rank= 1,1
         #index i = 0 is the song itself hence dist = 0.0
         for _, row in recommendations.iterrows():

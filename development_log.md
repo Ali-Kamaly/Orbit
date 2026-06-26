@@ -75,3 +75,12 @@ Enter artist name: Drake;Wizkid;Kyla
     - maybe add feature that shows the details of the song you pasted to make sure correct song was inputted
 - annoying having relatively small dataset as more often than not the user's decided song to use as input will not be in the dataset
 - planing to add spotify public playlist link capability for user, program will have to adapt depending on what link is sent, user shouldn't have to specify that its a playlist etc. so can have a cleaner UX design
+
+### 24/06/2026
+- added ability to enter spotify public playlist link, easier for user than manually entering all songs
+    - songs from entered playlist that are also in the database are only used, the other songs are ignored as there is no data about the song's information
+    - sign to perhaps increase dataset size
+- trying to access more than 50 songs at a time from entered playlist
+
+### 26/06/2026
+- currently not calculating number of songs in playlist properly

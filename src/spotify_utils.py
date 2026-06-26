@@ -53,10 +53,10 @@ def get_tracks_from_playlist(spotify_url):
         return None
     
     results = sp.playlist_items(playlist_id)
+    song_names = []
+    artists = []
 
     while results: 
-        song_names = []
-        artists = []
 
         for song in results['items']:
             print(song)
