@@ -94,3 +94,4 @@ Enter artist name: Drake;Wizkid;Kyla
 - implemented elbow test to find suitable k value for k means clustering
     - elbow appears to be 7-9 but that shouldn't mean instantly letting k = 7-9
     ![K-Means Clustering Elbow Test](image.png)
+        - Hyperparameter tuning computationally expensive, running the test took a few minutes
