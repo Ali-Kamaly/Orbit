@@ -95,3 +95,77 @@ Enter artist name: Drake;Wizkid;Kyla
     - elbow appears to be 7-9 but that shouldn't mean instantly letting k = 7-9
     ![K-Means Clustering Elbow Test](image.png)
         - Hyperparameter tuning computationally expensive, running the test took a few minutes
+
+- carried out cluster analysis, distribution of clusters and their sizes
+    - noticed every k clusters had a smaller cluster, curious as it could indicate Orbit discovering a new niche genre of music
+    - the smaller clusters still persist even as K increases which strongly suggests there to be a niche genre or style of music within the dataset perhaps classical 
+    - ==== K = 3 ===
+cluster
+0    28430
+1    35682
+2    17231
+Name: count, dtype: int64
+Inertia 508595.5342217324
+
+==== K = 7 ===
+cluster
+0    18346
+1    24049
+2    16136
+3     1023
+4     9732
+5     6256
+6     5801
+Name: count, dtype: int64
+Inertia 340264.9989980618
+
+==== K = 10 ===
+cluster
+0     9158
+1    12171
+2     9685
+3    14360
+4     4467
+5    10076
+6     5832
+7     5333
+8      908
+9     9353
+Name: count, dtype: int64
+Inertia 293875.6391673481
+
+==== K = 25 ===
+cluster
+0     2288
+1     4272
+2     3958
+3     3126
+4     1927
+5      551
+6     5463
+7     3581
+8     2484
+9      895
+10    3311
+11    4457
+12    4838
+13    1909
+14    2697
+15    3690
+16    2249
+17    2659
+18    3713
+19    4578
+20    6607
+21    2639
+22    2433
+23    2798
+24    4220
+Name: count, dtype: int64
+Inertia 209446.349067789
+
+- carried out PCA tests
+    - ![PCA test K = 3](image-1.png)
+    - ![PCA test K = 7](image-2.png)
+    - ![PCA test K = 10](image-3.png)
+    - ![PCA test K = 25](image-4.png)
