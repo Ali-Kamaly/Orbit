@@ -53,6 +53,7 @@ def test_clustered_knn_speed(query_index, query_vector, repetitions = 10):
 def compare_runtimes(iterations = 10):
 
     indices_tested = []
+    speed_ups = []
     for _ in range(iterations):
         query_index = np.random.randint(0, len(df))
         while query_index in indices_tested:
@@ -65,10 +66,14 @@ def compare_runtimes(iterations = 10):
 
         normal_speed = test_normal_knn_speed(query_vector, 100)
         clustered_speed = test_clustered_knn_speed(query_index, query_vector, 100)
+        speed_up = normal_speed/clustered_speed
+        speed_ups.append(speed_up)
 
         print(f"Normal KNN Avg. Time: {normal_speed}")
         print(f"Clustered KNN Avg. Time: {clustered_speed}")
-        print(f"Clustered KNN is {normal_speed/clustered_speed} faster")
+        print(f"Clustered KNN is {speed_up} faster")
 
+    print(f"Cluster KNN speedups mean: {np.mean(speed_ups)}")
+    print(f"Cluster KNN speedups median: {np.median(speed_ups)}")
 
 compare_runtimes()

@@ -198,3 +198,6 @@ Inertia 209446.349067789
 - began run time comparison so can objectively compare speed of normal KNN vs clustered KNN
 - compared speed with just one song, reps 100: ![time comparison, one song 100 reps](image-8.png)
 - further tests with random songs: ![time comparison, random songs](image-9.png)
+- noticed that the speedups between clustered KNN and normal KNN vary from 4-20 times faster depending on which song was picked
+    - ![4-20 times speedups](image-10.png)
+    - predicting this may be because of the cluster the song falls in, if the cluster is of smaller size, it'll lead to faster KNN searches as the song pool will be far smaller
