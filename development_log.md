@@ -191,3 +191,10 @@ Inertia 209446.349067789
 - finalised k = 7 for k-means clustering
     - explore further why cluster 3 has 1023 songs (far less than the other clusters) ![cluster sizes, k = 7](image-7.png)
 - Integrated clustered to reduce KNN search complexity as well as improve recommendations
+- made Orbit search for nearest 10 songs instead of 5 just in case recommended songs are no longer on Spotify and so making it more robust, recommendation would skip songs no longer on spotify
+- need to check that implementing this clustered knn is actually good 
+
+### 28/06/26
+- began run time comparison so can objectively compare speed of normal KNN vs clustered KNN
+- compared speed with just one song, reps 100: ![time comparison, one song 100 reps](image-8.png)
+- further tests with random songs: ![time comparison, random songs](image-9.png)
