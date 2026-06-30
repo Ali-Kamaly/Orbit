@@ -3,20 +3,19 @@ from recommend import get_recommendations
 import numpy as np
 from spotify_utils import search_track, get_track_from_track_url, get_tracks_from_playlist
 
-st.title("Orbit")
+st.title("𝕺𝖗𝖇𝖎𝖙")
 st.subheader("Music that revolves around you.")
 
 preset = st.selectbox("Choose what aspect of the song should matter most",["Balanced", "Rhythm Focused", "Energy Focused", "Acoustic Focused", "Vocals Focused", "Mood Focused"])
 
-st.info(
-"""Rhythm Focused = match movement/groove/danceability/tempo\n
-Energy Focused = match intensity/punch/loudness\n
-Acoustic Focused = match organic/acoustic texture\n
-Vocals Focused = match speech/vocal-forward qualities\n
-Mood Focused = match emotional tone, mainly valence\n"""
-)
+with st.expander("What do the presets mean?"):
+    st.write("Rhythm Focused = match movement/groove/danceability/tempo")
+    st.write("Energy Focused = match intensity/punch/loudness")
+    st.write("Acoustic Focused = match organic/acoustic texture")
+    st.write("Vocals Focused = match speech/vocal-forward qualities")
+    st.write("Mood Focused = match emotional tone, mainly valence")
 
-advanced = st.checkbox("Advanced Controls")
+
 
 
 if preset == "Balanced":
@@ -85,9 +84,9 @@ if preset == "Mood Focused":
     valence_weight = 2.5
     tempo_weight = 1.0
 
+#advanced = st.checkbox("Advanced Controls")
 
-
-if advanced:
+with st.expander("Advanced Controls"):
     danceability_weight = st.slider("Danceability", 0.0, 3.0, danceability_weight)
     energy_weight = st.slider("Energy", 0.0, 3.0, energy_weight)
     loudness_weight = st.slider("Loudness", 0.0, 3.0, loudness_weight)
