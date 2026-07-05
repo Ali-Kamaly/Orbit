@@ -3,8 +3,41 @@ from recommend import get_recommendations
 import numpy as np
 from spotify_utils import search_track, get_track_from_track_url, get_tracks_from_playlist
 
-st.title("𝕺𝖗𝖇𝖎𝖙")
-st.subheader("Music that revolves around you.")
+st.markdown(
+    """
+    <div style="text-align: center; margin: -20px 0 40px 0; width: 100%;">
+        <p style="
+            font-family: sans-serif; 
+            font-size: 120px; 
+            font-weight: 900; 
+            letter-spacing: 12px; 
+            margin: 0;
+            background: linear-gradient(135deg, #e0aaff, #c77dff, #7b2cbf, #3c096c);
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0px 4px 20px rgba(199, 125, 255, 0.3));
+            margin-right: -12px; 
+        ">
+            ORBIT
+        </p>
+        <!-- Slogan -->
+        <p style="
+            font-family: monospace; 
+            letter-spacing: 6px; 
+            color: #888888; 
+            font-size: 14px; 
+            margin: -20px 0 0 0; 
+            text-transform: uppercase;
+            margin-right: -6px;
+        ">
+            MUSIC THAT REVOLVES AROUND YOU
+        </p>
+    </div>
+    """, 
+    unsafe_allow_html=True
+)
+
+
 
 preset = st.selectbox("Choose what aspect of the song should matter most",["Balanced", "Rhythm Focused", "Energy Focused", "Acoustic Focused", "Vocals Focused", "Mood Focused"])
 
