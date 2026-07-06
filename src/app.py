@@ -26,6 +26,52 @@ def display_suggested_tracks(url, album, cover, distance, rank, shown):
     st.divider()
     return rank, shown
 
+def display_section_header(title, subtitle, icon):
+    st.markdown(
+        f"""
+        <div style="margin: 60px 0 25px 0;">
+            <div style="
+                display: flex;
+                align-items: center;
+                gap: 14px;
+                margin-bottom: 6px;
+            ">
+                <span style="
+                    color: #c77dff;
+                    font-size: 28px;
+                    filter: drop-shadow(0 0 10px rgba(199, 125, 255, 0.45));
+                ">{icon}</span>
+                <span style="
+                    font-family: sans-serif;
+                    font-size: 34px;
+                    font-weight: 900;
+                    letter-spacing: 3px;
+                    text-transform: uppercase;
+                    background: linear-gradient(135deg, #e0aaff, #c77dff, #7b2cbf);
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                ">{title}</span>
+            </div>
+            <p style="
+                margin: 0 0 0 43px;
+                color: #8f96a8;
+                font-family: monospace;
+                font-size: 13px;
+                letter-spacing: 2px;
+                text-transform: uppercase;
+            ">
+                {subtitle}
+            </p>
+            <div style="
+                height: 1px;
+                margin-top: 18px;
+                background: linear-gradient(90deg, rgba(199,125,255,0.6), rgba(199,125,255,0));
+            "></div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
 #title
 st.markdown(
     """
@@ -233,7 +279,8 @@ if st.button("Recommend"):
         
         #if a song from database is no longer in spotify, display next best recommendations
 
-        st.header("Songs In Your Orbit")
+        #st.header("Songs In Your Orbit")
+        display_section_header("Your Orbit", "Closest matches based on your musical taste", "💫")
         for i, (_, row) in enumerate(exploitation_recs.iterrows()):
             if shown_exploitation == 5:
                 #only recommend five songs for exploitation part of recommendation system
@@ -250,7 +297,8 @@ if st.button("Recommend"):
             rank, shown_exploitation = display_suggested_tracks(url, album, cover, exploitation_dist, rank, shown_exploitation)
 
         shown_explore, rank = 0, 1
-        st.header("Expand Your Orbit")
+        #st.header("Expand Your Orbit")
+        display_section_header("Expand Your Orbit", "Discover music just beyond your usual taste", "🔭")
         for i, (_, row) in enumerate(exploration_recs.iterrows()):
             if shown_explore == 2:
                 #only recommend two songs for exploration part of recommendation system
