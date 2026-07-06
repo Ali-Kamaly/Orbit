@@ -42,7 +42,7 @@ def extract_playlist_id(spotify_url):
     if "playlist/" not in spotify_url:
         print("invalid playlist link")
         return None
-
+    
     playlist_id = spotify_url.split('playlist/')[1].split('?')[0]
     return playlist_id
 
@@ -50,9 +50,12 @@ def get_tracks_from_playlist(spotify_url):
     playlist_id = extract_playlist_id(spotify_url)
     print(playlist_id)
     if playlist_id is None:
-        return None
+        return None, "invalid link"
     
-    results = sp.playlist_items(playlist_id)
+    try:
+        results = sp.playlist_items(playlist_id)
+    except spotipy.exceptions.SpotifyException:
+        return None, "no access"
     song_names = []
     artists = []
 

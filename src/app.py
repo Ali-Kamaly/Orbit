@@ -166,7 +166,8 @@ input_mode = st.radio("Input type", ["Manual Entry", "Spotify Link"])
 
 song_names = []
 artists = []
-
+link_chosen = None
+no_access_playlist, invalid_link = False, False
 
 if input_mode == "Manual Entry":
     num_songs = st.number_input("How many songs would you like to enter: ", min_value = 1)
@@ -179,8 +180,9 @@ if input_mode == "Manual Entry":
 
 else:
     type_of_link = st.radio("Link type", ["Track link", "Playlist link"])
+    link_chosen = type_of_link
 
-    if type_of_link == "Track link":
+    if type_of_link == "Track link":    
         num_songs = st.number_input("How many songs would you like to enter: ", min_value = 1)
 
         for i in range(num_songs):
@@ -194,30 +196,44 @@ else:
     else:
         spotify_url = st.text_input("Paste spotify public playlist URL: ")
         tracks_data = get_tracks_from_playlist(spotify_url)
-        if tracks_data is not None:
+        first_val, _ = tracks_data
+        if first_val is not None:
+            no_access_playlist = False
             track_names, artists_names = tracks_data
             song_names = track_names.copy()
             print(len(song_names))
             artists = artists_names.copy()
-        
-
+        else:
+            _, reason = tracks_data
+            if reason == "no access":
+                no_access_playlist = True
+            elif reason == "invalid link":
+                invalid_link = True
 
 
 if st.button("Recommend"):
     result = get_recommendations(song_names, artists, weights)
     if result is None:
-        st.error("None of the inputted songs were found :(")
-        ##################################
-        #improve errors shown to user to know what the error actually is
-        #too vague rn just says song not found for any type of error
+        
+        if input_mode == "Spotify Link":
+            if link_chosen == "Track link":
+                st.error("All song links entered were invalid")
+            else:
+                if no_access_playlist:
+                    st.error("Only upload playlists that you own/have collaborated with")
+                elif invalid_link:
+                    st.error("Playlist link entered was invalid")
+                else:
+                    st.error("Playlist has no valid songs")
+        else:
+            st.error("None of the inputted songs were found :(")
     else:
         exploitation_recs, exploitation_dist, exploration_recs, exploration_dist, valid_songs_count = result
         rank, shown_exploitation = 1, 0
         
-        """if a song from database is no longer in spotify, 
-        display next best recommendations"""
+        #if a song from database is no longer in spotify, display next best recommendations
 
-        st.subheader("Songs In Your Orbit")
+        st.header("Songs In Your Orbit")
         for i, (_, row) in enumerate(exploitation_recs.iterrows()):
             if shown_exploitation == 5:
                 #only recommend five songs for exploitation part of recommendation system
@@ -225,18 +241,16 @@ if st.button("Recommend"):
             result = search_track(row["track_name"], row["artists"])
             if result is None:
                 #song is no longer available on Spotify, skip it in the suggestions
-                print(f"recommended song {row['track_name']} by {row['artists']} is no longer on spotify")
+                #print(f"recommended song {row['track_name']} by {row['artists']} is no longer on spotify")
                 continue
             
-            print(i, row['track_name'], row['artists'], exploitation_dist[0][i])
+            #print(i, row['track_name'], row['artists'], exploitation_dist[0][i])
             
             url, album, cover = result
-
             rank, shown_exploitation = display_suggested_tracks(url, album, cover, exploitation_dist, rank, shown_exploitation)
 
-
         shown_explore, rank = 0, 1
-        st.subheader("Expand Your Orbit")
+        st.header("Expand Your Orbit")
         for i, (_, row) in enumerate(exploration_recs.iterrows()):
             if shown_explore == 2:
                 #only recommend two songs for exploration part of recommendation system
@@ -250,10 +264,8 @@ if st.button("Recommend"):
             #print(i, row['track_name'], row['artists'], exploration_dist[0][i])
 
             url, album, cover = result
-            
             rank, shown_explore = display_suggested_tracks(url, album, cover, exploration_dist, rank, shown_explore)
 
-        #refactor code above too messy
 
         st.write(f"Recommendations based on {valid_songs_count}/{len(song_names)} songs given")
 
