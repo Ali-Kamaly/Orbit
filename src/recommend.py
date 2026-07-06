@@ -2,165 +2,117 @@ import pandas as pd
 from sklearn.neighbors import NearestNeighbors
 import numpy as np
 
+SIMILARITY_FEATURES = ['danceability','energy','loudness','speechiness','acousticness','instrumentalness',
+                    'liveness','valence','tempo']
+
 def initial_set_up():
     df = pd.read_csv('data/processed/clustered_dataset.csv')
     centroids = np.load('data/processed/centroids.npy').astype(float)
-    similarity_features = ['danceability','energy','loudness','speechiness','acousticness','instrumentalness',
-                    'liveness','valence','tempo']
-    #the greater the number of similarity features the worse the suggestiong model will perform
-    #most songs will become uniformly distributed
-    return df, centroids, similarity_features
+    #the greater the number of similarity features the worse the suggestion model will perform
+    #as most songs will become uniformly distributed
+    return df, centroids
 
 def get_matches(song_name, artist_name, df):
     """
-    Find all songs that have same song name and artist name - should ideally only be one match
+    Finds all songs that have the same song name and artist name - should ideally only be one match
     """
     matches = df[
         (df['track_name']== song_name) &
         (df['artists'] == artist_name)]
     return matches
 
-def convert_songs_to_vectors(df, similarity_features):
-    song_vectors = df[similarity_features].values
-    #1 row and however many cols needed
-    #print(f"Song vectors:\n{song_vectors}")
-    return song_vectors
+def convert_songs_to_vectors(df):
+    return df[SIMILARITY_FEATURES].values
 
-def find_closest_songs(query_vector, song_vectors, df):
+def find_closest_songs(query_vector, song_vectors, df, exclude_query_song = False):
     knn = NearestNeighbors(n_neighbors = 10, metric = 'euclidean')
+    #finding 10 songs even though only 5 will be shown to allow for room if songs must be skipped
     knn.fit(song_vectors)
     #just stores song_vectors
     distances, indices = knn.kneighbors(query_vector)
     #finds mathematically closests songs to query song using euclidean distance
     recommendations = df.iloc[indices[0]]
-    recommendations = recommendations.iloc[1:]
-    #closest song will inevitably be itself if query is one song - disregard that recommendation later
 
-    distances = distances[:, 1:]
+    if exclude_query_song:
+        #closest song will inevitably be itself if query is one song - disregard that recommendation later
+        recommendations = recommendations.iloc[1:]
+        distances = distances[:, 1:]
 
     return recommendations, distances
 
-
-def get_query_songs():
-    num_songs = int(input("How many songs to enter: "))
-    query_songs = []
-    query_artists = []
-    for i in range(num_songs):
-        query_song_name = input("Enter song name: ")
-        query_artist_name = input("Enter artist name: ")
-        query_songs.append(query_song_name)
-        query_artists.append(query_artist_name)
-    return query_songs,query_artists
-
-def get_query_vectors(query_songs, query_artists, df, similarity_features):
+def get_query_vectors(query_songs, query_artists, df):
     query_vectors = []
     valid_songs = 0
 
     for i in range (len(query_songs)):    
         matches = get_matches(query_songs[i], query_artists[i], df)
-        print(matches)
-        #index of song in the df
+        
         if matches.empty:
-            #print(f"The song {query_songs[i]} by {query_artists[i]} was not found.")
+            #the specific song was not found in the dataset
             pass
         else:
             valid_songs +=1
             query_song = matches.iloc[0]
             #converted to series- only want first match
-            query_vector = query_song[similarity_features].values.astype(float)
+            query_vector = query_song[SIMILARITY_FEATURES].values.astype(float)
             query_vectors.append(query_vector)
             #converted to numpy array, only interested in similarity features values
-            #print(f"Queried song:\n{query_song}")
-            #print(f"Query vector:\n{query_vector}")
 
-            #print(matches)
     if len(query_vectors) == 0:
         query_vectors = None
+        #no songs were found in the database hence no data for query song
     return query_vectors, valid_songs
 
 def get_query_vectors_avg(query_vectors):
     """
-    Returns one vector that is the average of all query vectors
+    Returns one vector that is the average of all query vectors - embedding
     """
     if query_vectors is None:
-        #print("No valid songs found.")
         return
     query_vectors_avg = np.mean(query_vectors, axis = 0).astype(float).reshape(1,-1)
     #getting average values for every similarity feature
     return query_vectors_avg
 
 def get_closest_centroids(query_vector, centroids):
+    """Finds closest centroid by calculating the euclidean distance of each centroid"""
     distances = np.linalg.norm(centroids-query_vector, axis = 1)
     return np.argsort(distances)
+    #centroids are sorted in the order of closest to furthest
 
-
-def find_nearest_centroid(query_vector, centroids):
-    distances = np.linalg.norm(centroids - query_vector, axis=1)
-    nearest_centroid = np.argmin(distances)
-    return nearest_centroid
 
 def get_recommendations(query_songs, query_artists, weights):
-    df, centroids, similarity_features = initial_set_up()
-    query_vectors, valid_songs_count = get_query_vectors(query_songs, query_artists, df, similarity_features)
+    df, centroids = initial_set_up()
+    query_vectors, valid_songs_count = get_query_vectors(query_songs, query_artists, df)
+    exclude_query_song = (valid_songs_count == 1)
+    #if valid song count == 1 then query song exists in dataset so must be excluded in recommendations
+
     if query_vectors is None:
+        #no query songs were found in the dataset
         return
     weighted_query_vectors = query_vectors * weights
 
-    print(f"Default: {query_vectors}")
-    print(f"Weighted: {weighted_query_vectors}")
     query_vectors_avg = get_query_vectors_avg(weighted_query_vectors)
     if query_vectors_avg is None:
-        #print("All songs entered are invalid.")
         return    
 
-    #print(query_vectors_avg)
     weighted_centroids = centroids * weights
     closest_centroids = get_closest_centroids(query_vectors_avg, weighted_centroids)
 
-    #used for exploitation vs exploration
+    #used for exploitation & exploration song recommendation
     nearest_centroid = closest_centroids[0]
     next_best_centroid = closest_centroids[1]
 
     #running knn on a smaller more refined dataset (recommending songs from same cluster)
     exploitation_cluster_df = df[df['cluster']==nearest_centroid]
-    exploitation_song_vectors = convert_songs_to_vectors(exploitation_cluster_df, similarity_features)
+    exploitation_song_vectors = convert_songs_to_vectors(exploitation_cluster_df)
     weighted_exploitation_song_vectors = exploitation_song_vectors * weights
-    exploitation_recs, exploitation_dist = find_closest_songs(query_vectors_avg, weighted_exploitation_song_vectors, exploitation_cluster_df)
+    exploitation_recs, exploitation_dist = find_closest_songs(query_vectors_avg, weighted_exploitation_song_vectors, exploitation_cluster_df, exclude_query_song)
 
     exploration_cluster_df = df[df['cluster']==next_best_centroid]
-    exploration_song_vectors = convert_songs_to_vectors(exploration_cluster_df, similarity_features)
+    exploration_song_vectors = convert_songs_to_vectors(exploration_cluster_df)
     weighted_exploration_song_vectors = exploration_song_vectors * weights
-    exploration_recs, exploration_dist = find_closest_songs(query_vectors_avg, weighted_exploration_song_vectors, exploration_cluster_df)
+    exploration_recs, exploration_dist = find_closest_songs(query_vectors_avg, weighted_exploration_song_vectors, exploration_cluster_df, exclude_query_song)
 
 
     return exploitation_recs, exploitation_dist, exploration_recs, exploration_dist, valid_songs_count
-
-
-
-#recommendations, distances = get_recommendations(query_songs, )
-#print(recommendations[['track_name','artists']])
-#print(recommendations[similarity_features])
-#printed in ascending order of distance i.e. closest similarity at top 
-#print(distances)
-
-if __name__ == "__main__":
-    danceability_weight, energy_weight, loudness_weight,speechiness_weight = 1,1,1,1
-    acousticness_weight,instrumentalness_weight, liveness_weight, valence_weight, tempo_weight = 1,1,1,1,1
-    weights = np.array([
-        danceability_weight,
-        energy_weight,
-        loudness_weight,
-        speechiness_weight,
-        acousticness_weight,
-        instrumentalness_weight,
-        liveness_weight,
-        valence_weight,
-        tempo_weight
-    ])
-
-    #need to have weights defined here
-    query_songs, query_artists = get_query_songs()
-    recommendations, distances = get_recommendations(query_songs, query_artists, weights)
-    print(recommendations[["track_name", "artists"]])
-    print(distances)
 

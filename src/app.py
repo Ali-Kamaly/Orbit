@@ -4,7 +4,7 @@ import numpy as np
 from spotify_utils import search_track, get_track_from_track_url, get_tracks_from_playlist
 
 
-def display_suggested_tracks(url, album, cover, distance, rank, shown):
+def display_suggested_tracks(row, url, album, cover, distance, rank, shown):
     col1, col2 = st.columns([1,2])
         
     with col1:
@@ -12,8 +12,9 @@ def display_suggested_tracks(url, album, cover, distance, rank, shown):
         st.image(cover, width=220)
     
     with col2:
+        artists = row['artists'].replace(";", ", ")
         st.markdown(
-    f"### {row['track_name']} | {row['artists']}")
+    f"### {row['track_name']} | {artists}")
         st.link_button("Open in Spotify", url)
 
         st.write(f"Album: {album}")
@@ -21,10 +22,9 @@ def display_suggested_tracks(url, album, cover, distance, rank, shown):
         match_score = round(100 / (1 + distance[0][i].round(3)), 1)
         st.write(f"Match Score: {match_score}%")
         st.progress(match_score/100)
-    rank+=1
-    shown+=1
+
     st.divider()
-    return rank, shown
+    return rank+1, shown+1
 
 def display_section_header(title, subtitle, icon):
     st.markdown(
@@ -111,11 +111,11 @@ st.markdown(
 preset = st.selectbox("Choose what aspect of the song should matter most",["Balanced", "Rhythm Focused", "Energy Focused", "Acoustic Focused", "Vocals Focused", "Mood Focused"])
 
 with st.expander("What do the presets mean?"):
-    st.write("Rhythm Focused = match movement/groove/danceability/tempo")
-    st.write("Energy Focused = match intensity/punch/loudness")
-    st.write("Acoustic Focused = match organic/acoustic texture")
-    st.write("Vocals Focused = match speech/vocal-forward qualities")
-    st.write("Mood Focused = match emotional tone, mainly valence")
+    st.write("Rhythm Focused: match movement/groove/danceability/tempo")
+    st.write("Energy Focused: match intensity/punch/loudness")
+    st.write("Acoustic Focused: match organic/acoustic texture")
+    st.write("Vocals Focused: match speech/vocal-forward qualities")
+    st.write("Mood Focused: match emotional tone, mainly valence")
 
 match preset:
     case "Balanced":
@@ -212,8 +212,7 @@ input_mode = st.radio("Input type", ["Manual Entry", "Spotify Link"])
 
 song_names = []
 artists = []
-link_chosen = None
-no_access_playlist, invalid_link = False, False
+link_chosen, no_access_playlist, invalid_link = None, False, False
 
 if input_mode == "Manual Entry":
     num_songs = st.number_input("How many songs would you like to enter: ", min_value = 1)
@@ -235,6 +234,7 @@ else:
             spotify_url = st.text_input(f"Paste spotify track {i+1} URL:")
             track_data = get_track_from_track_url(spotify_url)
             if track_data is None:
+                #invalid track link
                 continue
             track_name, artist = track_data
             song_names.append(track_name)
@@ -247,7 +247,6 @@ else:
             no_access_playlist = False
             track_names, artists_names = tracks_data
             song_names = track_names.copy()
-            print(len(song_names))
             artists = artists_names.copy()
         else:
             _, reason = tracks_data
@@ -260,7 +259,6 @@ else:
 if st.button("Recommend"):
     result = get_recommendations(song_names, artists, weights)
     if result is None:
-        
         if input_mode == "Spotify Link":
             if link_chosen == "Track link":
                 st.error("All song links entered were invalid")
@@ -276,45 +274,39 @@ if st.button("Recommend"):
     else:
         exploitation_recs, exploitation_dist, exploration_recs, exploration_dist, valid_songs_count = result
         rank, shown_exploitation = 1, 0
-        
-        #if a song from database is no longer in spotify, display next best recommendations
 
-        #st.header("Songs In Your Orbit")
         display_section_header("Your Orbit", "Closest matches based on your musical taste", "💫")
         for i, (_, row) in enumerate(exploitation_recs.iterrows()):
             if shown_exploitation == 5:
                 #only recommend five songs for exploitation part of recommendation system
                 break
+
             result = search_track(row["track_name"], row["artists"])
             if result is None:
                 #song is no longer available on Spotify, skip it in the suggestions
-                #print(f"recommended song {row['track_name']} by {row['artists']} is no longer on spotify")
                 continue
-            
-            #print(i, row['track_name'], row['artists'], exploitation_dist[0][i])
-            
+                
+            #if a song from database is no longer in spotify, display next best recommendations
             url, album, cover = result
-            rank, shown_exploitation = display_suggested_tracks(url, album, cover, exploitation_dist, rank, shown_exploitation)
+            rank, shown_exploitation = display_suggested_tracks(row, url, album, cover, exploitation_dist, rank, shown_exploitation)
 
         shown_explore, rank = 0, 1
-        #st.header("Expand Your Orbit")
+
         display_section_header("Expand Your Orbit", "Discover music just beyond your usual taste", "🔭")
         for i, (_, row) in enumerate(exploration_recs.iterrows()):
             if shown_explore == 2:
                 #only recommend two songs for exploration part of recommendation system
                 break
+
             result = search_track(row["track_name"], row["artists"])
             if result is None:
                 #song is no longer available on spotify, skip it in the suggestions
-                #print(f"recommended song {row['track_name']} by {row['artists']} is no longer on spotify")
                 continue
-            
-            #print(i, row['track_name'], row['artists'], exploration_dist[0][i])
 
             url, album, cover = result
-            rank, shown_explore = display_suggested_tracks(url, album, cover, exploration_dist, rank, shown_explore)
+            rank, shown_explore = display_suggested_tracks(row, url, album, cover, exploration_dist, rank, shown_explore)
 
 
-        st.write(f"Recommendations based on {valid_songs_count}/{len(song_names)} songs given")
+        st.caption(f"Recommendations based on {valid_songs_count}/{len(song_names)} songs given")
 
 

@@ -223,3 +223,8 @@ Inertia 209446.349067789
     - suggest few songs that user will likely like given query song and then suggest discovery songs that are in the next closest cluster so that it's controlled exploration and not just random suggestions
 
 -I split recommendations into exploitation and exploration. Exploitation returns songs nearest in feature space, while exploration searches the nearest neighbouring cluster to expose users to songs that remain similar but broaden their listening.
+
+### 06/07/26
+- improved branding and design of Orbit sticking to a theme throughout polishing final product
+- cleaned up print statements and bugs
+- improved error statements by stating cause of error to help user use app with more ease

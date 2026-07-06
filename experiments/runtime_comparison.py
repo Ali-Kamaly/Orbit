@@ -76,8 +76,6 @@ def compare_runtimes(iterations = 10):
     print(f"Cluster KNN speedups mean: {np.mean(speed_ups)}")
     print(f"Cluster KNN speedups median: {np.median(speed_ups)}")
 
-#compare_runtimes()
-
 
 def compare_cluster_runtimes(repetitions = 100):
     speed_ups = []

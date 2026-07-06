@@ -16,7 +16,7 @@ kmeans.fit(song_vectors)
 cluster_labels = kmeans.labels_
 centroids = kmeans.cluster_centers_
 inertia = kmeans.inertia_
-# sum of squared song vectors from respective centroid
+#sum of squared song vectors from respective centroid
 
 df['cluster'] = cluster_labels
 df.to_csv('data/processed/clustered_dataset.csv', index = False)
