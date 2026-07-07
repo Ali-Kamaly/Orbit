@@ -228,3 +228,6 @@ Inertia 209446.349067789
 - improved branding and design of Orbit sticking to a theme throughout polishing final product
 - cleaned up print statements and bugs
 - improved error statements by stating cause of error to help user use app with more ease
+
+### 07/07/26
+- start writing README, collecting all information from development log
