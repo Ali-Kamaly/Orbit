@@ -57,7 +57,7 @@ Enter artist name: Drake;Wizkid;Kyla
 - will need to further improve presets with user feedback perhaps
     - realised that feature weights do not mean “make this feature high or low.”  
     They mean “how important is it that this feature matches the query song?”
-    For example, increasing the energy weight does not mean recommending high-energy songs. It means recommendations must have energy values closer to the query song’s energy
+    i.e increasing the energy weight does not mean recommending high-energy songs. It means recommendations must have energy values closer to the query song’s energy
 - added tickbox option for user to fine tune recommendation system themselves if they want to
 
 ### 20/06/2026
@@ -93,7 +93,7 @@ Enter artist name: Drake;Wizkid;Kyla
 - added cluster number to every song in new csv file
 - implemented elbow method to find suitable k value for k means clustering
     - elbow appears to be 7-9 but that shouldn't mean instantly letting k = 7-9
-    ![K-Means Clustering Elbow Test](image.png)
+    ![K-Means Clustering Elbow Test](assets\screenshots\elbow_test.png)
         - Hyperparameter tuning computationally expensive, running the test took a few minutes
 
 - carried out cluster analysis, distribution of clusters and their sizes
@@ -165,17 +165,17 @@ Name: count, dtype: int64
 Inertia 209446.349067789
 
 - carried out PCA
-    - ![PCA test K = 3](image-1.png)
-    - ![PCA test K = 7](image-2.png)
-    - ![PCA test K = 10](image-3.png)
-    - ![PCA test K = 25](image-4.png)
+    - ![PCA test K = 3](assets\screenshots\PCA_k3.png)
+    - ![PCA test K = 7](assets\screenshots\PCA_k7.png)
+    - ![PCA test K = 10](assets\screenshots\PCA_k10.png)
+    - ![PCA test K = 25](assets\screenshots\PCA_k25.png)
     - from PCA its apparent there are obvious regions 
     - increasing k subdivides the broad regions
     - pca was useful to see that the clustering isn't random but isn't good due to lack of a quantitive score of how well the clustering actually is
         - since 9d was compressed to 2d obviously there will be overlaps in the graph
 - aim to implement silhouette score to get a quantitative measure of how well the clustering is for every k value in [3,7,10,25]
 - analysed the pca further and noticed only 48% of data was preserved when transorming 9D information to 2D
-    - ![Data on axes and preservation](image-5.png)
+    - ![Data on axes and preservation](assets\screenshots\info_preservation.png)
     - explains why data was messier the higher the k-value (52% of data about the songs wasn't being  on the plot)
     - PC1 almost looks like: modern energetic music <-> acoustic/quieter music
     - PC2 is harder to judge but looked like: Happy/danceable/acoustic vs Instrumental/lower-energy/faster
@@ -183,23 +183,23 @@ Inertia 209446.349067789
 
 ### 27/06/26
 - calculating silhouette score to have quantitative data to see how effective the clustering is across varying k values [3,7,10,25]
-    - initial silhouette scores were not amazing:![Initial Silhouette Score](image-6.png)
+    - initial silhouette scores were not amazing:![Initial Silhouette Score](assets\screenshots\silhouette_scores.png)
         - maybe increase n_init to get better initial centroid locations
         - the initial silouette score was a shock initially but later realised that songs are very similar even in a dataset of only 80k songs and so to actually divide them into clusters is difficult
         - silhouette score peaks at k = 7 
     - all tests (independent on one another) carried out (Elbow method, PCA & now Silhouette Score) point to k = 7 being an optimum k value
 - finalised k = 7 for k-means clustering
-    - explore further why cluster 3 has 1023 songs (far less than the other clusters) ![cluster sizes, k = 7](image-7.png)
+    - explore further why cluster 3 has 1023 songs (far less than the other clusters) ![cluster sizes, k = 7](assets\screenshots\cluster_sizes.png)
 - Integrated clustered to reduce KNN search complexity as well as improve recommendations
 - made Orbit search for nearest 10 songs instead of 5 just in case recommended songs are no longer on Spotify and so making it more robust, recommendation would skip songs no longer on spotify
 - need to check that implementing this clustered knn is actually good 
 
 ### 28/06/26
 - began run time comparison so can objectively compare speed of normal KNN vs clustered KNN
-- compared speed with just one song, reps 100: ![time comparison, one song 100 reps](image-8.png)
-- further tests with random songs: ![time comparison, random songs](image-9.png)
+- compared speed with just one song, reps 100
+- further tests with random songs: ![time comparison, random songs](assets\screenshots\knn_speed_test1.png)
 - noticed that the speedups between clustered KNN and normal KNN vary from 4-20 times faster depending on which song was picked
-    - ![4-20 times speedups](image-10.png)
+    - ![4-20 times speedups](assets\screenshots\knn_speed_test2.png)
     - predicting this may be because of the cluster the song falls in, if the cluster is of smaller size, it'll lead to faster KNN searches as the song pool will be far smaller
 - carried out a better benchmark test to confirm hypothesis by sampling one song from every cluster
 - Benchmarked clustered KNN against full-dataset KNN by selecting one representative query from each K-Means cluster and averaging runtime over 100 reps
@@ -210,7 +210,7 @@ Inertia 209446.349067789
 
 ### 29/06/26
 -To evaluate whether K-Means clustering significantly altered recommendation behaviour, I compared the top 10 nearest neighbours returned by the original KNN recommender and the clustered KNN recommender. A larger candidate set of 10 was chosen because the application may discard recommendations that are unavailable through the Spotify API, ensuring that users can still receive five valid recommendations
-- ![Jaccard Score 1000 unique songs](image-11.png)
+- ![Jaccard Score 1000 unique songs](assets\screenshots\jaccard_scores.png)
     - median score of 1.0 shows more than half of songs tested had same recommendation
         - suggests clustering drastically improves recommendations speed while also preserving most of the recommendation quality 
     - extremelely low Jaccard score minimum shows how clustering can occasionally drastically change song recommendations perhaps the song was on the edge of a cluster 
@@ -231,3 +231,7 @@ Inertia 209446.349067789
 
 ### 07/07/26
 - start writing README, collecting all information from development log
+
+### 12/07/26
+- improved ui further
+- continued writing README
