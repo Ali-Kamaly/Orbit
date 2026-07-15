@@ -1,30 +1,6 @@
-<div style="text-align: center; margin: -20px 0 40px 0; width: 100%;">
-        <p style="
-            font-family: sans-serif; 
-            font-size: 120px; 
-            font-weight: 900; 
-            letter-spacing: 12px; 
-            margin: 0;
-            background: linear-gradient(135deg, #e0aaff, #c77dff, #7b2cbf, #3c096c);
-            -webkit-background-clip: text; 
-            -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0px 4px 20px rgba(199, 125, 255, 0.3));
-            margin-right: -12px; 
-        ">
-            ORBIT
-        </p>
-        <p style="
-            font-family: monospace; 
-            letter-spacing: 6px; 
-            color: #888888; 
-            font-size: 14px; 
-            margin: -20px 0 0 0; 
-            text-transform: uppercase;
-            margin-right: -6px;
-        ">
-            MUSIC THAT REVOLVES AROUND YOU
-        </p>
-    </div>
+<p align="center">
+  <img src="assets/screenshots/clean_logo.png" width="800">
+</p>
 
 Orbit is a machine learning-powered music recommendation web application that helps users discover songs they are likely to enjoy while balancing familiarity with musical exploration.
 
@@ -46,9 +22,9 @@ Built using **Python**, **scikit-learn**, **pandas**, **Streamlit**, **Spotipy**
   - [Feature Weighting](#3-feature-weighting)
   - [Recommendation Pipeline](#4-recommendation-pipeline)
 - [Evaluation & Design Decisions](#evaluation--design-decisions)
-- Results
-- Installation
-- Future Improvements
+- [Results](#results)
+- [Future Improvements](#future-improvements)
+- [Installation](#future-improvements)
 
 
 ## Application Preview
@@ -71,11 +47,11 @@ Controlled exploration recommendations generated from the closest neighbouring m
 ## Motivation
 I have always enjoyed discovering new music and exploring artists, genres and sounds outside my typical listening habits. Spotify's discovery features, especially DJ X, are useful and a tool I utilise quite often but they became too repetitive. For me, it returned songs and artists that were too mainstream and already familiar to me.
 
-I built Orbit to investigate where I could create a recommendation system that remained closely aligned with a listener's taste while also encouraging more deliberate music discovery. By allowing the user to specify and  dictate what they value in a song and how their recommendations should be tailored, Orbit was able to suggest unexpected cross-genre and cross-language recommendations that I would not normally encounter through mainstream recommendation feeds. Rather than relying on popularity, listening-history data or Spotify’s own recommendation engine, Orbit compares songs using audio characteristics such as energy, danceability, acousticness, valence and tempo. During early testing, the smaller independent dataset often produced unexpected cross-genre and cross-language recommendations that I would not normally encounter through mainstream recommendation feeds.
+I built Orbit to investigate whether I could create a recommendation system that remained closely aligned with a listener's taste while also encouraging more deliberate music discovery. Rather than relying on popularity, listening-history data or Spotify’s own recommendation engine, Orbit compares songs using audio characteristics such as energy, danceability, acousticness, valence and tempo. By allowing the user to specify and  dictate what they value in a song and how their recommendations should be tailored, during early testing, the smaller independent dataset often produced unexpected cross-genre and cross-language recommendations that I would not normally encounter through mainstream recommendation feeds.
 
 The 80,000 song dataset that I initially thought would be a limitation became part of the project's identity: instead of trying to produce Spotify at a smaller scale, Orbit aims to balance **familiarity and exploration**. That idea eventually became the two-part recommendation system:
-- **Your Orbit** — high-confidence recommendations close to the listener’s current taste.
-- **Expand Your Orbit** — controlled exploration into the nearest neighbouring musical region.
+- **Your Orbit** - high-confidence recommendations close to the listener’s current taste.
+- **Expand Your Orbit** - controlled exploration into the nearest neighbouring musical region.
 
 ## Features
 
@@ -136,7 +112,7 @@ The 80,000 song dataset that I initially thought would be a limitation became pa
     Your Orbit   Expand Your Orbit
 
 ### 1. Data Preparation
-Orbit is built upon a dataset containing approximately 114,000 Spotify tracks together with their associated audio features.
+Orbit is built upon a dataset containing approximately **114,000 Spotify tracks** together with their associated audio features.
 Before any recommendation could be generated, the dataset required preprocessing to improve data quality and ensure that distance calculations were meaningful.
 
 #### Duplicate Removal
@@ -159,18 +135,18 @@ The final feature set consists of:
 - Valence 
 - Tempo
 
-These attributes were chosen because they describe how a song sounds rather than how popular it is, allowing recommendations to generalise across genres and languages.
+These attributes were chosen because they describe how a song sounds rather than how popular it is, allowing recommendations to generalise across genres and languages. 
 
 #### Feature Scaling
 Since recommendation quality depends on Euclidean distance, all similarity features were standardised before training. 
-I chose standardisation rather than min-max normalisation because several features contained noticeable outliers. Standardisation preserves meaningful variation while preventing features with larger numberical ranges from dominating distance calculations. 
+I chose standardisation rather than min-max normalisation because several features contained noticeable outliers. Standardisation preserves meaningful variation while preventing features with larger numerical ranges from dominating distance calculations. 
 
-    After preprocessing, every song in the dataset was represented as a nine-dimensional feature vector. These vectors form the foundation of Orbit's recommendation pipeline.
+After preprocessing, every song in the dataset was represented as a nine-dimensional feature vector. These vectors form the foundation of Orbit's recommendation pipeline.
 
 ### 2. Query Representation
-Unlike many recommendation systems that only accept a single song, Orbit allows users to build recommendations from multiples songs or entire Spotify playlists. This would allow the user to receive song recommendations that better matched the vibe of a song they were achieving to get. 
+Unlike many recommendation systems that only accept a single song, Orbit allows users to build recommendations from multiple songs or entire Spotify playlists. This would allow the user to receive song recommendations that better matched the vibe of a song they were achieving to get. 
 
-The challenge therefore becomes representing multiples songs as a single query that can be compared against every song in the dataset. 
+The challenge therefore becomes representing multiple songs as a single query that can be compared against every song in the dataset. 
 
 #### Song Representation
 After preprocessing, every song is represented as a nine-dimensional feature vector containing its standardised Spotify audio features. When a user enters a single song, Orbit simply retrieves its corresponding feature vector from the dataset and uses it as the query representation.
@@ -179,9 +155,9 @@ After preprocessing, every song is represented as a nine-dimensional feature vec
 Supporting Spotify playlist recommendations required a way of representing multiple songs as a single query. For every valid song contained within the playlist, Orbit retrieves its feature vector and computes the mean across every audio feature. This average vector acts as a playlist embedding, representing the overall musical characteristics of the playlist rather than any individual song. Recommendations are then generated by finding songs whose feature vectors are closest to this averaged representation.
 
 #### Handling Missing Songs
-Since the dataset is significantly smaller than Spotify's catalogue, some user-entered songs may not exist locally.Rather than terminating the recommendation process, Orbit simply ignores songs that are unavailable in the dataset and constructs the query using every remaining valid song. Only if no valid songs are found does the recommendation process terminate and return an informative error message.
+Since the dataset is significantly smaller than Spotify's catalogue, some user-entered songs may not exist locally. Rather than terminating the recommendation process, Orbit simply ignores songs that are unavailable in the dataset and constructs the query using every remaining valid song. Only if no valid songs are found does the recommendation process terminate and return an informative error message.
 
-    The resulting query vector is then passed into Orbit's recommendation pipeline, where user-defined feature weighting and clustered nearest-neighbour search are applied.
+The resulting query vector is then passed into Orbit's recommendation pipeline, where user-defined feature weighting and clustered nearest-neighbour search are applied.
 
 ### 3. Feature Weighting
 Every listener has their own different interpretation of what makes two songs ***feel similar***
@@ -223,8 +199,9 @@ Rather than waiting for this limitation to become a bottleneck, I redesigned the
 To achieve this, Orbit combines **K-Means clustering** with **K-Nearest Neighbours (KNN)**. Rather than performing nearest-neighbour search across the entire dataset, Orbit first identifies the most relevant musical region before applying KNN within that smaller search space. This substantially reduces the number of distance calculations required while aiming to preserve recommendation quality.
 
 #### K-Means Clustering
-K-Means clustering partitions the dataset into groups of songs with similar audio characteristics.
-Each cluster is represented by a centroid, which acts as the average position of every song assigned to that cluster within the feature space.
+K-Means clustering partitions Orbit's 80,000-song dataset into groups of songs with similar audio characteristics.
+Each centroid represents the average location of songs within a cluster and acts as a fast way of determining which musical region a query belongs to before KNN is performed.
+
 When a recommendation request is made, Orbit first determines which cluster best represents the user's query before performing any nearest-neighbour search.
 
 #### Finding the Nearest Cluster
@@ -241,13 +218,13 @@ Searching within a smaller subset of musically similar songs significantly impro
 #### Exploration Recommendation
 To balance familiarity with exploration, Orbit also identifies the second-closest cluster.
 The nearest songs from this neighbouring musical region form the **Expand Your Orbit** recommendations.
-This introduces new artists and styles that remain close to the user's existing preferences without feeling completely unrelated. It helps bridge the user to possibly new style and/or artists that they may not have listened to before.
+This introduces new artists and styles that remain close to the user's existing preferences without feeling completely unrelated.
 
 ## Evaluation & Design Decisions
 ### Selecting the Number of Clusters
 Introducing K-Means clustering required determining an appropriate value for k.
 
-Choosing too few clusters would create broad musical regions, reducing recommendation specificity. On the other hand, selecting too many clusters would fragment the dataset into very small groups, limiting the songs available for nearest-neighbour search
+Choosing too few clusters would create broad musical regions, reducing recommendation specificity. On the other hand, selecting too many clusters would fragment the dataset into very small groups, limiting the songs available for nearest-neighbour search.
 
 To investigate this trade-off, I evaluated several values of k using three techniques:
 
@@ -264,14 +241,127 @@ This provided an initial estimate for an appropriate range of values for **k**, 
 **Figure 1** - Elbow curve used to estimate the initial range for k
 ![image](assets/screenshots/elbow_test.png)
 
+The diagram suggests that a k value ranging from 6-10 is ideal.
+
 ### Silhouette Score
-Silhouette analysis measures how well each song fits within its assigned cluster compared with neighbouring clusters. Higher silhouette scores indicate better-separated clusters but recommendation quality must also be taken into consideration alongside this metric.
+Curious to see how accurate K-Means clustering was, I used the silhouette score to evaluate how well songs fitted within their assigned clusters. Admittedly, I expected larger silhouette scores than the values that were calculated. After further investigation, I realised it reflected the fact that songs naturally exist on a spectrum rather than in clearly separated groups. The highest score occurred at k = 7, supporting the choice suggested by the elbow method.
 
 **Figure 2** - Silhouette Score for varying k values
 ![image](assets/screenshots/silhouette_scores.png)
+
+It's apparent from Figure 2 that the silhouette score peaks at k = 7.
+
 
 ### PCA Visualisations
 Because clustering occurs in a nine-dimensional feature space, direct visual inspection is impossible.
 Principal Component Analysis (PCA) was therefore used to project songs into two dimensions, allowing the overall cluster structure to be inspected visually.
 
-Although PCA inevitably loses information during projection, it provided useful qualitative evidence that the selected value of **k** produced distinct musical regions without excessive fragmentation.
+Although PCA inevitably loses information during projection (as we are effectively mapping a 9-dimensional vector space to a 2-dimensional one), it provided useful qualitative evidence that the selected value of **k** produced distinct musical regions without excessive fragmentation.
+
+**Figure 3** - PCA k = 3
+![image](assets/screenshots/PCA_k3.png)
+
+**Figure 4** - PCA k = 7
+![image](assets/screenshots/PCA_k7.png)
+
+**Figure 5** - PCA k = 10
+![image](assets/screenshots/PCA_k10.png)
+
+**Figure 6** - PCA k = 25
+![image](assets/screenshots/PCA_k25.png)
+
+> After conducting three independent experiments (Elbow method, PCA and Silhouette Score), it was apparent that k = 7 is an ideal value.
+
+### Runtime Performance
+
+Introducing K-Means was motivated by scalability rather than immediate necessity.
+
+Although KNN across 80,000 songs was already sufficiently fast for practical use, I wanted the recommendation pipeline to remain efficient as the dataset increased in size, since KNN has a time-complexity of O(N).
+
+
+To evaluate the impact of clustered search, I compared:
+
+- Standard KNN across the entire dataset
+- Clustered KNN using the nearest K-Means cluster
+
+with 100 repetitions for each random song chosen
+
+Across repeated recommendation queries, clustered KNN consistently reduced recommendation time while maintaining comparable recommendation quality.
+
+**Figure 7** - KNN vs Clustered KNN 
+
+![image](assets/screenshots/knn_speed_test1.png)
+![image](assets/screenshots/knn_speed_test2.png)
+
+I noticed that the speedups between clustered KNN and normal KNN vary from 4-20 times faster depending on which song was picked, i.e which cluster the song was in. 
+
+So, I carried out a better benchmark test to confirm hypothesis by sampling one song from every cluster. I benchmarked clustered KNN against full-dataset KNN by selecting one random representative query from each K-Means cluster and averaged the runtime over 100 repetitions.
+> results showed a **median speedup of 13.76x** and **mean speedup of 18.68x**. *Smaller* clusters produced *larger gains*, with the *smallest* cluster (cluster 3) achieving *a 55.19x speedup*
+- This supports the decision to use K-Means as an offline preprocessing step to reduce KNN candidate search space and confirms that K-Means clustering speeds up search times of recommended songs
+
+
+
+To evaluate whether K-Means clustering significantly altered recommendation behaviour, I compared the top 10 nearest neighbours returned by the original KNN recommender and the clustered KNN recommender. A larger candidate set of 10 was chosen because the application may discard recommendations that are unavailable through the Spotify API, ensuring that users can still receive five valid recommendations.
+
+**Figure 8** - Jaccard Similarity Scores
+
+![image](assets/screenshots/jaccard_scores.png)
+
+The median Jaccard similarity of 1.0 indicates that, for more than half of the evaluated queries, clustered KNN returned exactly the same recommendations as searching the entire dataset. The small number of low-overlap cases typically occurred for songs positioned close to cluster boundaries, where restricting search to a single cluster naturally changes the nearest neighbours.
+
+Interestingly, this boundary limitation validates the core product design of Orbit. The **Expand Your Orbit** mode was initially designed purely from a user-experience perspective to encourage music discovery by querying the second-closest cluster. 
+
+> During evaluation, I realised this deliberate product feature simultaneously solves the mathematical edge-case issue: by searching the neighboring cluster, Orbit naturally captures those high-quality boundary vectors that just missed the primary cluster cut. 
+
+## Results
+
+The experiments demonstrate that clustering substantially improves recommendation efficiency while preserving recommendation quality. The table below summarises the final implementation and the key outcomes of the evaluation process.
+
+| Metric | Result |
+|--------|--------:|
+| Original dataset | 114,000 songs |
+| Final dataset | ~80,000 unique songs |
+| Median runtime speed-up | 13.76× |
+| Mean runtime speed-up | 18.68× |
+| Maximum measured speed-up | 55.19× |
+| Median Jaccard similarity | 1.0 |
+| Mean Jaccard similarity | 0.881 | 
+| Min Jaccard similarity | 0.059 |
+
+## Limitations
+
+Although Orbit performs well within its intended scope, several limitations remain.
+
+- Recommendations are limited to songs contained within the local dataset
+- Similarity is based solely on Spotify audio features and does not incorporate listening history or collaborative filtering
+- Songs unavailable in the dataset cannot contribute to playlist embeddings
+- K-Means introduces small recommendation differences for songs positioned near cluster boundaries
+- Due to the current Spotify Web API authentication setup, playlist recommendations are limited to playlists accessible by the authenticated Spotify account used by Orbit
+
+## Future Improvements
+
+Potential future improvements include:
+
+- Expanding the recommendation dataset
+- Investigating approximate nearest neighbour search (e.g. FAISS, which I accidentally started to work towards) for further scalability
+- Exploring collaborative filtering alongside content-based recommendations
+- Learning user preferences over time through recommendation feedback
+- Deploying Orbit as a publicly accessible web application
+
+## Installation
+
+Clone the repository
+
+```bash
+git clone https://github.com/Ali-Kamaly/Orbit.git
+cd Orbit
+
+pip install -r requirements.txt
+
+Create a .env file:
+
+SPOTIPY_CLIENT_ID=...
+SPOTIPY_CLIENT_SECRET=...
+SPOTIPY_REDIRECT_URI=...
+
+streamlit run src/app.py

@@ -1,15 +1,33 @@
 from dotenv import load_dotenv
 import os, spotipy
+import streamlit as st
 from spotipy.oauth2 import SpotifyOAuth
 
 load_dotenv()
 
+def get_secret(name):
+    """
+    Get a credential from Streamlit cloud when deployed, or from the
+    local .env file when running locally
+    """
+    try:
+        value = st.secrets[name]
+    except (FileNotFoundError, KeyError):
+        value = os.getenv(name)
+
+    if not value:
+        raise RuntimeError(
+            f"Missing required credential {name}"
+        )
+
+    return value
+
 sp = spotipy.Spotify(
     auth_manager=SpotifyOAuth(
-        client_id=os.getenv("SPOTIPY_CLIENT_ID"),
-        client_secret=os.getenv("SPOTIPY_CLIENT_SECRET"),
-        redirect_uri=os.getenv("SPOTIPY_REDIRECT_URI"),
-        scope="user-read-private"
+        client_id=get_secret("SPOTIPY_CLIENT_ID"),
+        client_secret=get_secret("SPOTIPY_CLIENT_SECRET"),
+        redirect_uri=get_secret("SPOTIPY_REDIRECT_URI"),
+        scope="playlist-read-private playlist-read-collaborative",
     )
 )
 
