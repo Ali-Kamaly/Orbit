@@ -3,8 +3,6 @@ from recommend import get_recommendations
 import numpy as np
 from spotify_utils import search_track, get_track_from_track_url, get_tracks_from_playlist
 
-#true by default but false for streamlit demo due to lack of spotify user login
-ENABLE_PLAYLIST = True
 
 def display_suggested_tracks(row, url, album, cover, distance, rank, shown):
     col1, col2 = st.columns([1,2])
@@ -226,10 +224,7 @@ if input_mode == "Manual Entry":
         artists.append(artist_name)
 
 else:
-    if ENABLE_PLAYLIST:
-        type_of_link = st.radio("Link type", ["Track link", "Playlist link"])
-    else:
-        type_of_link = "Track link"
+    type_of_link = st.radio("Link type", ["Track link", "Playlist link"])
 
     link_chosen = type_of_link
 
@@ -247,7 +242,11 @@ else:
             artists.append(artist)
     else:
         spotify_url = st.text_input("Paste spotify public playlist URL: ")
-        tracks_data = get_tracks_from_playlist(spotify_url)
+        try:
+            tracks_data = get_tracks_from_playlist(spotify_url)
+        except Exception:
+            st.error("⚠️ Playlist input is currently unavaible in the public demo.\nThe playlist recommendation engine is fully implemented" \
+            "and can be used when running Orbit locally with your own Spotify Developer credentials.")
         first_val, _ = tracks_data
         if first_val is not None:
             no_access_playlist = False
