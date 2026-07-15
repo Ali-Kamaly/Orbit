@@ -332,11 +332,13 @@ The experiments demonstrate that clustering substantially improves recommendatio
 
 Although Orbit performs well within its intended scope, several limitations remain.
 
+
 - Recommendations are limited to songs contained within the local dataset
 - Similarity is based solely on Spotify audio features and does not incorporate listening history or collaborative filtering
 - Songs unavailable in the dataset cannot contribute to playlist embeddings
 - K-Means introduces small recommendation differences for songs positioned near cluster boundaries
 - Due to the current Spotify Web API authentication setup, playlist recommendations are limited to playlists accessible by the authenticated Spotify account used by Orbit
+
 
 ## Future Improvements
 
@@ -349,6 +351,16 @@ Potential future improvements include:
 - Deploying Orbit as a publicly accessible web application
 
 ## Installation
+
+### Live Demo
+
+The deployed application supports manual song input and Spotify track links.
+Playlist import is currently disabled in the public demo because Spotify requires user-specific authorisation for playlist access.
+
+### Running Locally
+
+When running Orbit locally with your own Spotify developer credentials, playlist recommendations are available for playlists owned by or collaboratively shared with your authenticated Spotify account.
+
 
 Clone the repository
 

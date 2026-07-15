@@ -6,4 +6,6 @@ __pycache__/
 .cache-*
 .streamlit/secrets.toml
 data/raw/
-data/processed/
+data/processed/*
+!data/processed/clustered_dataset.csv
+!data/processed/centroids.npy

@@ -235,3 +235,8 @@ Inertia 209446.349067789
 ### 12/07/26
 - improved ui further
 - continued writing README
+
+### 16/07/26
+- deployed streamlit application
+    - realised issue with accessing spotify account via streamlit application so had to disable playlist input method for streamlit demo as playlists were tied to whether the user owned/collaborated the playlist
+    - added another client that dealt with tracks, playlist covers etc (i.e. anything not related to playlists) so can still access all relevant data without having to be connected to a specific spotify user

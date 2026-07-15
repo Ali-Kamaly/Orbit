@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 import os, spotipy
 import streamlit as st
-from spotipy.oauth2 import SpotifyOAuth
+from spotipy.oauth2 import SpotifyOAuth, SpotifyClientCredentials
 
 load_dotenv()
 
@@ -22,18 +22,40 @@ def get_secret(name):
 
     return value
 
-sp = spotipy.Spotify(
+CLIENT_ID = get_secret("SPOTIPY_CLIENT_ID")
+CLIENT_SECRET = get_secret("SPOTIPY_CLIENT_SECRET")
+
+#public spotify catalogue client - works locally and on streamlit cloud without a user login
+catalogue_sp = spotipy.Spotify(
+    auth_manager=SpotifyClientCredentials(
+        client_id = CLIENT_ID,
+        client_secret = CLIENT_SECRET
+    )
+)
+
+def create_user_client():
+    return spotipy.Spotify(
     auth_manager=SpotifyOAuth(
         client_id=get_secret("SPOTIPY_CLIENT_ID"),
         client_secret=get_secret("SPOTIPY_CLIENT_SECRET"),
         redirect_uri=get_secret("SPOTIPY_REDIRECT_URI"),
         scope="playlist-read-private playlist-read-collaborative",
+        )
+    )
+
+sp = spotipy.Spotify(
+    auth_manager=SpotifyOAuth(
+        client_id=CLIENT_ID,
+        client_secret=CLIENT_SECRET,
+        redirect_uri=get_secret("SPOTIPY_REDIRECT_URI"),
+        scope="playlist-read-private playlist-read-collaborative",
+        cache_path = ".cache"
     )
 )
 
 def search_track(track_name, artist_name):
     query = f"track:{track_name} artist:{artist_name}"
-    results = sp.search(q = query, type = 'track')
+    results = catalogue_sp.search(q = query, type = 'track')
     items = results["tracks"]["items"]
     if len(items)==0:
         return 
@@ -66,8 +88,10 @@ def get_tracks_from_playlist(spotify_url):
     if playlist_id is None:
         return None, "invalid link"
     
+    user_sp = create_user_client()
+
     try:
-        results = sp.playlist_items(playlist_id)
+        results = user_sp.playlist_items(playlist_id)
     except spotipy.exceptions.SpotifyException:
         return None, "no access"
     song_names = []
@@ -84,7 +108,7 @@ def get_tracks_from_playlist(spotify_url):
             artists.append(artist_names)
 
         if results['next']:
-            results = sp.next(results)
+            results = user_sp.next(results)
         else:
             break
     return song_names, artists
@@ -95,7 +119,7 @@ def get_track_from_track_url(spotify_url):
         return None
     
     try:
-        track = sp.track(track_id)
+        track = catalogue_sp.track(track_id)
     except spotipy.exceptions.SpotifyException:
         return None
     track_name = track['name']

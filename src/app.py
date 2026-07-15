@@ -3,6 +3,8 @@ from recommend import get_recommendations
 import numpy as np
 from spotify_utils import search_track, get_track_from_track_url, get_tracks_from_playlist
 
+#true by default but false for streamlit demo due to lack of spotify user login
+ENABLE_PLAYLIST = True
 
 def display_suggested_tracks(row, url, album, cover, distance, rank, shown):
     col1, col2 = st.columns([1,2])
@@ -224,7 +226,11 @@ if input_mode == "Manual Entry":
         artists.append(artist_name)
 
 else:
-    type_of_link = st.radio("Link type", ["Track link", "Playlist link"])
+    if ENABLE_PLAYLIST:
+        type_of_link = st.radio("Link type", ["Track link", "Playlist link"])
+    else:
+        type_of_link = "Track link"
+
     link_chosen = type_of_link
 
     if type_of_link == "Track link":    
