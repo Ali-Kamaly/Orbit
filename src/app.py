@@ -2,7 +2,7 @@ import streamlit as st
 from recommend import get_recommendations
 import numpy as np
 from spotify_utils import search_track, get_track_from_track_url, get_tracks_from_playlist
-
+from spotify_utils import INVALID_LINK, NO_ACCESS, PLAYLISTS_DISABLED
 
 def display_suggested_tracks(row, url, album, cover, distance, rank, shown):
     col1, col2 = st.columns([1,2])
@@ -253,11 +253,11 @@ else:
             artists = artists_names.copy()
         else:
             _, reason = tracks_data
-            if reason == "no access":
+            if reason == NO_ACCESS:
                 no_access_playlist = True
-            elif reason == "invalid link":
+            elif reason == INVALID_LINK:
                 invalid_link = True
-            elif reason == "playlists disabled":
+            elif reason == PLAYLISTS_DISABLED:
                 playlist_disabled = True
 
 
@@ -271,14 +271,19 @@ if st.button("Recommend"):
                 if no_access_playlist:
                     st.error("Only upload playlists that you own/have collaborated with")
                 elif invalid_link:
-                    st.error("Playlist link entered was invalid")
+                    st.error("Invalid playlist link entered")
                 elif playlist_disabled:
-                    st.warning("⚠️ Playlist input is currently unavaible in the public demo.\nThe playlist recommendation engine is fully implemented" \
-            "and can be used when running Orbit locally with your own Spotify Developer credentials.")
+                    st.warning(
+                        "⚠️ Playlist input is currently unavailable in the public demo.\n\n"
+                        "The playlist recommendation engine is fully implemented, but Spotify "
+                        "requires user-specific authentication to access playlist data.\n\n"
+                        "To use playlist inputs, run Orbit locally with your own "
+                        "Spotify Developer credentials. See the Installation Guide for setup instructions."
+                    )
                 else:
                     st.error("Playlist has no valid songs")
         else:
-            st.error("None of the inputted songs were found :(")
+            st.error("None of the inputted songs were found")
     else:
         exploitation_recs, exploitation_dist, exploration_recs, exploration_dist, valid_songs_count = result
         rank, shown_exploitation = 1, 0

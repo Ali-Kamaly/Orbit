@@ -3,6 +3,11 @@ import os, spotipy
 import streamlit as st
 from spotipy.oauth2 import SpotifyOAuth, SpotifyClientCredentials
 
+INVALID_LINK = "invalid_link"
+NO_ACCESS = "no_access"
+PLAYLISTS_DISABLED = "playlists_diabled"
+
+
 load_dotenv()
 
 def get_secret(name):
