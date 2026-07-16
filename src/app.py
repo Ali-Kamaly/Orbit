@@ -212,7 +212,7 @@ input_mode = st.radio("Input type", ["Manual Entry", "Spotify Link"])
 
 song_names = []
 artists = []
-link_chosen, no_access_playlist, invalid_linkm, playlist_disabled = None, False, False, False
+link_chosen, no_access_playlist, invalid_link, playlist_disabled = None, False, False, False
 
 if input_mode == "Manual Entry":
     num_songs = st.number_input("How many songs would you like to enter: ", min_value = 1)
