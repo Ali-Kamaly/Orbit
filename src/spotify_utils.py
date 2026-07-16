@@ -53,6 +53,7 @@ sp = spotipy.Spotify(
     )
 )
 
+
 def search_track(track_name, artist_name):
     query = f"track:{track_name} artist:{artist_name}"
     results = catalogue_sp.search(q = query, type = 'track')
@@ -83,16 +84,25 @@ def extract_playlist_id(spotify_url):
     playlist_id = spotify_url.split('playlist/')[1].split('?')[0]
     return playlist_id
 
+def playlists_enabled():
+    try:
+        return st.secrets.get("ENABLE_PLAYLISTS", False)
+    except FileNotFoundError:
+        return True
+
 def get_tracks_from_playlist(spotify_url):
     playlist_id = extract_playlist_id(spotify_url)
     if playlist_id is None:
         return None, "invalid link"
     
+    if not playlists_enabled():
+        return None, "playlists disabled"
+    
     user_sp = create_user_client()
 
     try:
         results = user_sp.playlist_items(playlist_id)
-    except spotipy.exceptions.SpotifyException:
+    except (Exception, spotipy.exceptions.SpotifyException):
         return None, "no access"
     song_names = []
     artists = []

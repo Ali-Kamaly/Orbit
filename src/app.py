@@ -212,7 +212,7 @@ input_mode = st.radio("Input type", ["Manual Entry", "Spotify Link"])
 
 song_names = []
 artists = []
-link_chosen, no_access_playlist, invalid_link = None, False, False
+link_chosen, no_access_playlist, invalid_linkm, playlist_disabled = None, False, False, False
 
 if input_mode == "Manual Entry":
     num_songs = st.number_input("How many songs would you like to enter: ", min_value = 1)
@@ -242,11 +242,9 @@ else:
             artists.append(artist)
     else:
         spotify_url = st.text_input("Paste spotify public playlist URL: ")
-        try:
-            tracks_data = get_tracks_from_playlist(spotify_url)
-        except Exception:
-            st.error("⚠️ Playlist input is currently unavaible in the public demo.\nThe playlist recommendation engine is fully implemented" \
-            "and can be used when running Orbit locally with your own Spotify Developer credentials.")
+        
+        tracks_data = get_tracks_from_playlist(spotify_url)
+            #st.warning
         first_val, _ = tracks_data
         if first_val is not None:
             no_access_playlist = False
@@ -259,6 +257,8 @@ else:
                 no_access_playlist = True
             elif reason == "invalid link":
                 invalid_link = True
+            elif reason == "playlists disabled":
+                playlist_disabled = True
 
 
 if st.button("Recommend"):
@@ -272,6 +272,9 @@ if st.button("Recommend"):
                     st.error("Only upload playlists that you own/have collaborated with")
                 elif invalid_link:
                     st.error("Playlist link entered was invalid")
+                elif playlist_disabled:
+                    st.warning("⚠️ Playlist input is currently unavaible in the public demo.\nThe playlist recommendation engine is fully implemented" \
+            "and can be used when running Orbit locally with your own Spotify Developer credentials.")
                 else:
                     st.error("Playlist has no valid songs")
         else:
