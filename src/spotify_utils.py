@@ -5,7 +5,7 @@ from spotipy.oauth2 import SpotifyOAuth, SpotifyClientCredentials
 
 INVALID_LINK = "invalid_link"
 NO_ACCESS = "no_access"
-PLAYLISTS_DISABLED = "playlists_diabled"
+PLAYLISTS_DISABLED = "playlists_disabled"
 
 
 load_dotenv()
@@ -48,16 +48,6 @@ def create_user_client():
         )
     )
 
-sp = spotipy.Spotify(
-    auth_manager=SpotifyOAuth(
-        client_id=CLIENT_ID,
-        client_secret=CLIENT_SECRET,
-        redirect_uri=get_secret("SPOTIPY_REDIRECT_URI"),
-        scope="playlist-read-private playlist-read-collaborative",
-        cache_path = ".cache"
-    )
-)
-
 
 def search_track(track_name, artist_name):
     query = f"track:{track_name} artist:{artist_name}"
@@ -98,17 +88,17 @@ def playlists_enabled():
 def get_tracks_from_playlist(spotify_url):
     playlist_id = extract_playlist_id(spotify_url)
     if playlist_id is None:
-        return None, "invalid link"
+        return None, INVALID_LINK
     
     if not playlists_enabled():
-        return None, "playlists disabled"
+        return None, PLAYLISTS_DISABLED
     
     user_sp = create_user_client()
 
     try:
         results = user_sp.playlist_items(playlist_id)
-    except (Exception, spotipy.exceptions.SpotifyException):
-        return None, "no access"
+    except spotipy.exceptions.SpotifyException:
+        return None, NO_ACCESS
     song_names = []
     artists = []
 

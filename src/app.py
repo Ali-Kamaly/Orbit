@@ -2,7 +2,10 @@ import streamlit as st
 from recommend import get_recommendations
 import numpy as np
 from spotify_utils import search_track, get_track_from_track_url, get_tracks_from_playlist
-from spotify_utils import INVALID_LINK, NO_ACCESS, PLAYLISTS_DISABLED
+
+INVALID_LINK = "invalid_link"
+NO_ACCESS = "no_access"
+PLAYLISTS_DISABLED = "playlists_disabled"
 
 def display_suggested_tracks(row, url, album, cover, distance, rank, shown):
     col1, col2 = st.columns([1,2])
