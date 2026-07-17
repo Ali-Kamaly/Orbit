@@ -111,6 +111,8 @@ Initially, duplicates were removed using only the Spotify track ID. During testi
 To address this, duplicate songs were also removed based on an identical combination of **track name** and **artist(s)**, reducing the dataset to approximately **80,000 unique songs**.
 This ensured recommendations were more diverse and prevented the same song appearing multiple times in the nearest neighbours. 
 
+To ensure the robustness of this pipeline and protect against regression, I implemented automated unit testing using pytest. The tests use a mock data frame to explicitly verify that the preprocessing logic catches edge cases where matching tracks share different unique Spotify IDs. 
+
 #### Similarity Features
 Rather than comparing songs using metadata such as genre or popularity, Orbit measures similarity using Spotify's numerical audio characteristics.
 

@@ -1,10 +1,11 @@
-import load_data
+from . import load_data
 
 from sklearn.preprocessing import StandardScaler
 
-def clean_data():
-    original_df = load_data.get_df()
 
+def clean_data(original_df):
+
+    #song is classified as duplicate if it shares the same track name and artist(s)
     new_df = original_df[['artists','track_name','track_id','popularity','duration_ms','explicit','danceability','energy',
                 'loudness','speechiness','acousticness','instrumentalness','liveness','valence','tempo']].copy()
     
@@ -37,8 +38,10 @@ def save_df(df):
 
 
 def preprocess():
-    new_df = clean_data()
+    original_df = load_data.get_df()
+    new_df = clean_data(original_df)
     preprocessed_df = standardise_data(new_df)
     save_df(preprocessed_df)
 
-preprocess()
+if __name__ == "__main__":
+    preprocess()
